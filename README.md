@@ -31,7 +31,7 @@ Price is the PAYG list price (0.01 USD/credit); pass `--eur-rate` to `build_repo
 ## Windows (Task Scheduler)
 
 ```powershell
-git clone https://github.com/bioztar/almirall-ai-costs; cd almirall-ai-costs
+git clone https://github.com/bioztar/copilot-credits-report; cd copilot-credits-report
 .\setup-windows.ps1 -UsageDir "<synced folder>\Usage" -CrSite "<tenant>.sharepoint.com:/sites/<site>"
 ```
 
