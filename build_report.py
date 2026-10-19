@@ -149,7 +149,9 @@ def write_html(data, daily, policies, path, eur_rate, usage):
     as_of = dt.date.fromisoformat(daily["date"].max()) if len(daily) and daily["date"].max()[:7] == m_now else dt.date.today()
     days_in, day = calendar.monthrange(y, mo)[1], min(as_of.day, calendar.monthrange(y, mo)[1])
     forecast = now["credits"].sum() / day * days_in
-    cap = next((p["periodLimit"].get("value") for p in policies if p.get("periodLimit", {}).get("value")), None)
+    # one cap per tier policy; sum the limited ones (an unlimited policy has no value)
+    cap = sum(p["periodLimit"]["value"] for p in policies
+              if p.get("status") == "enabled" and (p.get("periodLimit") or {}).get("value")) or None
 
     kpis = [("Credits this month (MTD)", cred(now["credits"].sum()), m_now + f", day {day}/{days_in}"),
             ("Cost this month (MTD)", money(now[cur].sum()), f"at {USD_PER_CREDIT} USD/credit"),
@@ -157,7 +159,7 @@ def write_html(data, daily, policies, path, eur_rate, usage):
             ("Last month", money(prev[cur].sum()), months[-2] if len(months) > 1 else "–"),
             ("Active users", str(now["upn"].nunique()), f"{prev['upn'].nunique()} last month")]
     if cap:
-        kpis.append(("Policy cap used", f"{now['credits'].sum()/cap:.0%}", f"of {cred(cap)} credits / month"))
+        kpis.append(("Policy cap used", f"{now['credits'].sum()/cap:.0%}", f"of {cred(cap)} credits / month, all enabled policies"))
     kpi_html = "".join(f'<div class=kpi><div class=k>{k}</div><div class=v>{v}</div><div class=s>{s}</div></div>' for k, v, s in kpis)
 
     cr_now = now.groupby("CR")[cur].sum().sort_values(ascending=False)
