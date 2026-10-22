@@ -45,6 +45,8 @@ interactively for the sign-in, then registers a daily task (runs late if the lap
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 CR_SITE="<tenant>.sharepoint.com:/sites/<site>" .venv/bin/python pull_credits.py "<Usage dir>"
 .venv/bin/python build_report.py "<Usage dir>"
+# optional: user file with CR in costCenter, for Microsoft's CreditUsage / FinOps Cowork tools
+.venv/bin/python cr_user_file.py "<Usage dir>" 2026-10
 ```
 
 The report contains named per-user data: keep the output folder restricted.
